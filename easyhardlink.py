@@ -31,11 +31,11 @@ def create_hardlink(source_dir, dest_dir):
 
                 # Replace the existing file by using the appropriate command based on the operating system
                 if platform.system() == "Windows":
-                    # Use the mklink command with the /h option to create a hardlink on Windows
-                    subprocess.run(["mklink", "/h", dest_path, source_path], shell=True)
+                    # Use the mklink command with the /h and /y options to create a hardlink and force replacement on Windows
+                    subprocess.run(["mklink", "/h", "/y", dest_path, source_path], shell=True)
                 elif platform.system() == "Linux":
                     # Use the ln command to create a hardlink on Linux
-                    subprocess.run(["ln", source_path, dest_path])
+                    subprocess.run(["ln", "-f", source_path, dest_path])
                 else:
                     print("Unsupported operating system")
                     sys.exit(1)
