@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import platform
 
 def create_hardlink(source_dir, dest_dir):
     # Check if the destination directory exists, otherwise create it
@@ -28,11 +29,27 @@ def create_hardlink(source_dir, dest_dir):
                 if answer.lower() != "y":
                     continue
 
-                # Replace the existing file by using the -f option with ln command
-                subprocess.run(["ln", "-f", source_path, dest_path])
+                # Replace the existing file by using the appropriate command based on the operating system
+                if platform.system() == "Windows":
+                    # Use the mklink command with the /h option to create a hardlink on Windows
+                    subprocess.run(["mklink", "/h", dest_path, source_path], shell=True)
+                elif platform.system() == "Linux":
+                    # Use the ln command to create a hardlink on Linux
+                    subprocess.run(["ln", source_path, dest_path])
+                else:
+                    print("Unsupported operating system")
+                    sys.exit(1)
             else:
-                # Create the hardlink from the source file to the destination using the ln command
-                subprocess.run(["ln", source_path, dest_path])
+                # Create the hardlink from the source file to the destination using the appropriate command
+                if platform.system() == "Windows":
+                    # Use the mklink command with the /h option to create a hardlink on Windows
+                    subprocess.run(["mklink", "/h", dest_path, source_path], shell=True)
+                elif platform.system() == "Linux":
+                    # Use the ln command to create a hardlink on Linux
+                    subprocess.run(["ln", source_path, dest_path])
+                else:
+                    print("Unsupported operating system")
+                    sys.exit(1)
 
             print(f"Created hardlink for: {dest_path}")
 
@@ -46,4 +63,3 @@ if __name__ == "__main__":
     destination_directory = sys.argv[2]
 
     create_hardlink(source_directory, destination_directory)
-
